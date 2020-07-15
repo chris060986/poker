@@ -223,6 +223,84 @@ class TestVillainCardsParsed:
         assert getattr(hand, attribute) == expected_value
 
 
+class TestFreerollTournamentHand:
+    hand_text = stars_hands.HAND6
+
+
+class TestTournamentHand:
+    hand_text = stars_hands.HAND7
+
+    # in py.test 2.4 it is recommended to use string like "attribute,expected",
+    # but with tuple, it works in both 2.3.5 and 2.4
+    @pytest.mark.parametrize(
+        ("attribute", "expected_value"),
+        [
+            ("ident", "212626281897"),
+            ("game_type", GameType.TOUR),
+            ("tournament_ident", "2878387134"),
+            ("tournament_level", "I"),
+            ("currency", Currency.USD),
+            ("buyin", Decimal("0.02")),
+            ("rake", Decimal("0.00")),
+            ("game", Game.HOLDEM),
+            ("limit", Limit.NL),
+            ("sb", Decimal(25)),
+            ("bb", Decimal(50)),
+            ("date", ET.localize(datetime(2020, 4, 24, 12, 16, 54))),
+        ],
+    )
+    def test_values_after_header_parsed(self, hand_header, attribute, expected_value):
+        assert getattr(hand_header, attribute) == expected_value
+
+    @pytest.mark.parametrize(
+        ("attribute", "expected_value"),
+        [
+            ("table_name", "2878387134 4"),
+            ("max_players", 9),
+            ("button", _Player(name="Pavs777_89", stack=1500, seat=1, combo=None)),
+            ("hero", _Player(name="Stickyfinger55", stack=1500, seat=6, combo=Combo("TcKc"))),
+            (
+                "players",
+                [
+                    _Player(name="Pavs777_89", stack=1500, seat=1, combo=None),
+                    _Player(name="lrb3", stack=1500, seat=2, combo=None),
+                    _Player(name="ADINA.MM", stack=1500, seat=3, combo=None),
+                    _Player(name="SARA CONAR", stack=1500, seat=4, combo=Combo('5c5h')),
+                    _Player(name="mikaela1209", stack=1500, seat=5, combo=None),
+                    _Player(name="Stickyfinger55", stack=1500, seat=6, combo=Combo("TcKc")),
+                    _Player(name="Cold_Siemens13", stack=1500, seat=7, combo=None),
+                    _Player(name="igor82828282", stack=1500, seat=8, combo=None),
+                    _Player(name="conor1409", stack=1500, seat=9, combo=None),
+                ],
+            ),
+            ("turn", Card("4h")),
+            ("river", Card("As")),
+            ("board", (Card("4c"), Card("7s"), Card("8h"), Card("4h"), Card("As"))),
+            (
+                "preflop_actions",
+                (
+                    "SARA CONAR: raises 1440 to 1490 and is all-in",
+                    "mikaela1209: folds",
+                    "Stickyfinger55: folds",
+                    "Cold_Siemens13: folds",
+                    "igor82828282: folds",
+                    "conor1409: folds",
+                    "Pavs777_89: folds",
+                    "lrb3: calls 1465 and is all-in",
+                    "ADINA.MM: folds",
+                ),
+            ),
+            ("turn_actions", None),
+            ("river_actions", None),
+            ("total_pot", Decimal(3120)),
+            ("show_down", True),
+            ("winners", ("SARA CONAR",)),
+        ],
+    )
+    def test_body(self, hand, attribute, expected_value):
+        assert getattr(hand, attribute) == expected_value
+
+
 class TestHandWithFlopOnly:
     hand_text = stars_hands.HAND1
 
@@ -374,7 +452,7 @@ class TestAllinPreflopHand:
                     _Player(name="Newfie_187", stack=1030, seat=6, combo=None),
                     _Player(name="Hokolix", stack=13175, seat=7, combo=None),
                     _Player(name="pmmr", stack=2415, seat=8, combo=None),
-                    _Player(name="costamar", stack=13070, seat=9, combo=None),
+                    _Player(name="costamar", stack=13070, seat=9, combo=Combo('AcKd')),
                 ],
             ),
             ("turn", Card("8d")),
