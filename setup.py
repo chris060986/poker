@@ -33,14 +33,14 @@ classifiers = [
 
 setup(
     name="poker",
-    version="0.30.0",
+    version="0.30.1",
     description="Poker Framework",
     long_description=Path("README.rst").read_text(),
     classifiers=classifiers,
     keywords="poker",
-    author="Kiss Gyorgy",
+    author="Kiss Gyorgy, Christoph Birk",
     author_email="kissgyorgy@me.com",
-    url="https://github.com/pokerregion/poker",
+    url="https://github.com/chris060986/poker",
     license="MIT",
     packages=find_packages(),
     install_requires=install_requires,
