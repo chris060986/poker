@@ -107,7 +107,10 @@ class HandHistoryHandler(BaseHandler):
         if obj.extra is not None and obj.extra.get('money_type') is not None:
             data['moneytype'] = str(obj.extra.get('money_type'))
         data['players'] = [self.context.flatten(player, reset=True) for player in obj.players]
-       # data['preflop'] = {'actions': obj.preflop_actions}
+
+        if obj.preflop is not None:
+            preflop_actions = [self.context.flatten(action, reset=False) for action in obj.preflop.actions]
+            data['preflop'] = {'actions': preflop_actions}
 
         if obj.flop is not None:
             data['flop'] = self.context.flatten(obj.flop, reset=True);
