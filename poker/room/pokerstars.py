@@ -11,7 +11,6 @@ from ..card import Card
 from ..hand import Combo
 from ..constants import Limit, Game, GameType, Currency, Action, MoneyType
 
-
 __all__ = ["PokerStarsHandHistory", "Notes"]
 
 
@@ -47,10 +46,11 @@ class _Street(hh._BaseStreet):
             actions.append(hh._PlayerAction(*action))
         self.actions = tuple(actions) if actions else None
 
+    # TODO: all currency symobols should be removed
     def _parse_uncalled(self, line):
         first_paren_index = line.find("(")
         second_paren_index = line.find(")")
-        amount = line[first_paren_index + 1 : second_paren_index]
+        amount = line[first_paren_index + 1: second_paren_index]
         amount = str.replace(amount, "$", "")
         name_start_index = line.find("to ") + 3
         name = line[name_start_index:]
@@ -61,7 +61,7 @@ class _Street(hh._BaseStreet):
         name = line[:first_space_index]
         second_space_index = line.find(" ", first_space_index + 1)
         third_space_index = line.find(" ", second_space_index + 1)
-        amount = line[second_space_index + 1 : third_space_index]
+        amount = line[second_space_index + 1: third_space_index]
         amount = str.replace(amount, "$", "")
         self.pot = Decimal(amount)
         return name, Action.WIN, self.pot
@@ -236,7 +236,7 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
     def _parse_preflop(self):
         start = self._sections[0] + 3
         stop = self._sections[1]
-        nocards = [""] # cause no cards are dealt
+        nocards = [""]  # cause no cards are dealt
         nocards.extend(self._splitted[start:stop])
         preflop = _Street(nocards)
         self.preflop = preflop
@@ -293,7 +293,7 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
                 seat = int(match.group(1))
                 playername = match.group(2)
                 split = match.group(3).split()
-                playerCombo = Combo.from_cards(Card(split[0]),Card( split[1]))
+                playerCombo = Combo.from_cards(Card(split[0]), Card(split[1]))
                 self.players[seat - 1].combo = playerCombo
                 winners.add(playername)
 
