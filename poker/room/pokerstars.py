@@ -39,14 +39,17 @@ class _Street(hh._BaseStreet):
             actions.append(hh._PlayerAction(*action))
         self.actions = tuple(actions) if actions else None
 
+    #TODO: uncalled should be parse with ($x.xx)
     def _parse_uncalled(self, line):
         first_paren_index = line.find("(")
         second_paren_index = line.find(")")
-        amount = line[first_paren_index + 1 : second_paren_index]
+        # + 2 cause of the currency symbol
+        amount = line[first_paren_index + 2 : second_paren_index]
         name_start_index = line.find("to ") + 3
         name = line[name_start_index:]
         return name, Action.RETURN, Decimal(amount)
 
+    # TODO: check if collected is parsed with ($x.xx)
     def _parse_collected(self, line):
         first_space_index = line.find(" ")
         name = line[:first_space_index]
@@ -179,9 +182,9 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         self._parse_button()
         self._parse_hero()
         self._parse_preflop()
-        self._parse_flop()
-        self._parse_street("turn")
-        self._parse_street("river")
+        self._parse_street("FLOP")
+        self._parse_street("TURN")
+        self._parse_street("RIVER")
         self._parse_showdown()
         self._parse_pot()
         self._parse_board()
@@ -226,31 +229,29 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
     def _parse_preflop(self):
         start = self._sections[0] + 3
         stop = self._sections[1]
-        self.preflop_actions = tuple(self._splitted[start:stop])
+        nocards = [""] # cause no cards are dealt
+        nocards.extend(self._splitted[start:stop])
+        preflop = _Street(nocards)
+        self.preflop = preflop
 
-    def _parse_flop(self):
+    def _parse_street(self, street_name):
         try:
-            start = self._splitted.index("FLOP") + 1
+            start = self._splitted.index(street_name) + 1
         except ValueError:
-            self.flop = None
-            return
-        stop = self._splitted.index("", start)
-        floplines = self._splitted[start:stop]
-        self.flop = _Street(floplines)
-
-    def _parse_street(self, street):
-        try:
-            start = self._splitted.index(street.upper()) + 2
-            stop = self._splitted.index("", start)
-            street_actions = self._splitted[start:stop]
             setattr(
                 self,
-                f"{street.lower()}_actions",
-                tuple(street_actions) if street_actions else None,
+                f"{street_name.lower()}",
+                None,
             )
-        except ValueError:
-            setattr(self, street, None)
-            setattr(self, f"{street.lower()}_actions", None)
+            return
+        stop = self._splitted.index("", start)
+        streetlines = self._splitted[start:stop]
+        street = _Street(streetlines)
+        setattr(
+            self,
+            f"{street_name.lower()}",
+            street,
+        )
 
     def _parse_showdown(self):
         self.show_down = "SHOW DOWN" in self._splitted
