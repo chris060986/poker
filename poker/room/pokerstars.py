@@ -18,7 +18,13 @@ __all__ = ["PokerStarsHandHistory", "Notes"]
 @implementer(hh.IStreet)
 class _Street(hh._BaseStreet):
     def _parse_cards(self, boardline):
-        self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]))
+        if len(boardline) == 10:
+            self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]))
+        if len(boardline) == 15:
+            self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]), Card(boardline[12:14]))
+        if len(boardline) == 18:
+            self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]),
+                          Card(boardline[10:12]), Card(boardline[15:17]))
 
     def _parse_actions(self, actionlines):
         actions = []
@@ -267,9 +273,14 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         boardline = self._splitted[self._sections[-1] + 3]
         if not boardline.startswith("Board"):
             return
-        cards = self._board_re.findall(boardline)
-        self.turn = Card(cards[3]) if len(cards) > 3 else None
-        self.river = Card(cards[4]) if len(cards) > 4 else None
+        cardsstr = self._board_re.findall(boardline)
+        i = 0
+        # value is not needed to set cause board is populated by property in
+        # _BaseHandHistory#board
+        for card in cardsstr:
+            if self.board[i] != Card(card):
+                raise RuntimeError("Boardcard not in Board as expected")
+            i += 1
 
     def _parse_winners(self):
         winners = set()

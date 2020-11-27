@@ -180,9 +180,9 @@ class _BaseHandHistory:
         if self.flop:
             board.extend(self.flop.cards)
             if self.turn:
-                board.append(self.turn)
+                board.append(self.turn.cards[3])
                 if self.river:
-                    board.append(self.river)
+                    board.append(self.river.cards[4])
         return tuple(board) if board else None
 
     def _parse_date(self, date_string):
