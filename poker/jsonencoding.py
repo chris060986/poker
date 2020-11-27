@@ -65,6 +65,12 @@ class StreetHandler(BaseHandler):
             data['actions'] = [self.context.flatten(action, reset=False) for action in obj.actions]
         if obj.cards is not None:
             data['cards'] = [self.context.flatten(x, reset=False) for x in obj.cards]
+            data['flushdraw'] = obj.has_flushdraw
+            data['gutshot'] = obj.has_gutshot
+            data['paired'] = obj.has_pair
+            data['straightdraw'] = obj.has_straightdraw
+            data['monotone'] = obj.is_monotone
+            data['triplet'] = obj.is_triplet
         return data
 
     def restore(self, obj):
@@ -101,34 +107,16 @@ class HandHistoryHandler(BaseHandler):
         if obj.extra is not None and obj.extra.get('money_type') is not None:
             data['moneytype'] = str(obj.extra.get('money_type'))
         data['players'] = [self.context.flatten(player, reset=True) for player in obj.players]
-        data['preflop'] = {'actions': obj.preflop_actions}
+       # data['preflop'] = {'actions': obj.preflop_actions}
 
         if obj.flop is not None:
-            flop = {}
-            if obj.flop.actions is not None:
-                flop['actions'] = [self.context.flatten(action, reset=True) for action in obj.flop.actions]
-            flop['cards'] = [self.context.flatten(card, reset=True) for card in obj.flop.cards]
-            flop['flushdraw'] = obj.flop.has_flushdraw
-            flop['gutshot'] = obj.flop.has_gutshot
-            flop['paired'] = obj.flop.has_pair
-            flop['straightdraw'] = obj.flop.has_straightdraw
-            flop['monotone'] = obj.flop.is_monotone
-            flop['triplet'] = obj.flop.is_triplet
-            data['flop'] = flop
+            data['flop'] = self.context.flatten(obj.flop, reset=True);
 
         if obj.turn is not None:
-            turn = {}
-            turn['card'] = self.context.flatten(obj.turn, reset=True)
-            if obj.turn_actions is not None:
-                turn['actions'] = obj.turn_actions
-            data['turn'] = turn
+            data['turn'] = self.context.flatten(obj.turn, reset=True);
 
         if obj.river is not None:
-            river = {}
-            river['card'] = self.context.flatten(obj.river, reset=True)
-            if obj.river_actions is not None:
-                river['actions'] = obj.river_actions
-            data['river'] = river
+            data['turn'] = self.context.flatten(obj.river, reset=True);
 
         if obj.board is not None:
             board_ = [self.context.flatten(card, reset=True) for card in obj.board]

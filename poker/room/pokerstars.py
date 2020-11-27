@@ -33,6 +33,8 @@ class _Street(hh._BaseStreet):
                 continue
             elif ":" in line:
                 action = self._parse_player_action(line)
+            elif "leaves" in line:
+                continue
             else:
                 raise RuntimeError("bad action line: " + line)
 
