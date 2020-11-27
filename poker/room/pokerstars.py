@@ -47,23 +47,22 @@ class _Street(hh._BaseStreet):
             actions.append(hh._PlayerAction(*action))
         self.actions = tuple(actions) if actions else None
 
-    #TODO: uncalled should be parse with ($x.xx)
     def _parse_uncalled(self, line):
         first_paren_index = line.find("(")
         second_paren_index = line.find(")")
-        # + 2 cause of the currency symbol
-        amount = line[first_paren_index + 2 : second_paren_index]
+        amount = line[first_paren_index + 1 : second_paren_index]
+        amount = str.replace(amount, "$", "")
         name_start_index = line.find("to ") + 3
         name = line[name_start_index:]
         return name, Action.RETURN, Decimal(amount)
 
-    # TODO: check if collected is parsed with ($x.xx)
     def _parse_collected(self, line):
         first_space_index = line.find(" ")
         name = line[:first_space_index]
         second_space_index = line.find(" ", first_space_index + 1)
         third_space_index = line.find(" ", second_space_index + 1)
         amount = line[second_space_index + 1 : third_space_index]
+        amount = str.replace(amount, "$", "")
         self.pot = Decimal(amount)
         return name, Action.WIN, self.pot
 

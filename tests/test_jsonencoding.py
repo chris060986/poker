@@ -1,3 +1,4 @@
+import re
 from decimal import Decimal
 
 import pytest
@@ -31,9 +32,8 @@ class TestStreetEncoding:
 
     def test_street_flop_encoding(self, json_encoder):
         street = _Street(["[Ad Ks Qc]", ],)
-        assert json_encoder.encode(street) == "{\"cards\": [{\"rank\": \"A\", \"suit\": \"DIAMONDS\"}, " \
-                                              "{\"rank\": \"K\", \"suit\": \"SPADES\"}, " \
-                                              "{\"rank\": \"Q\", \"suit\": \"CLUBS\"}]}"
+        expected = """{"cards": [{"rank": "A", "suit": "DIAMONDS"}, {"rank": "K", "suit": "SPADES"}, {"rank": "Q", "suit": "CLUBS"}]"""
+        assert expected in json_encoder.encode(street)
 
     def test_board_tuple_encoding(self, json_encoder):
         board = tuple([Card("Ad"), Card("Ks"), Card("Qc"), Card("Jh"), Card("Ts")])
@@ -183,16 +183,15 @@ class TestFullPokerstarsHand:
 
     def test_preflop(self, json_encoder):
         json = json_encoder.encode(get_parsed_hand())
-        expected = "\"preflop\": {\"actions\": [\"KyJIaKoB leaves the table\", " \
-                   "\"oeggel: folds\", " \
-                   "\"3_Socks420: folds\", " \
-                   "\"Laandris09: folds\", " \
-                   "\"Ammageddon: folds\", " \
-                   "\"BigSiddyB: raises $0.02 to $0.04\", " \
-                   "\"sindyeichelbaum: raises $0.59 to $0.63 and is all-in\", " \
-                   "\"masterhodge: folds\", " \
-                   "\"pokerhero: folds\", " \
-                   "\"BigSiddyB: calls $0.59\"]"
+        expected = "\"preflop\": {\"actions\": [{\"name\": \"oeggel\", \"action\": \"FOLD\"}, " \
+                        "{\"name\": \"3_Socks420\", \"action\": \"FOLD\"}, " \
+                        "{\"name\": \"Laandris09\", \"action\": \"FOLD\"}, " \
+                        "{\"name\": \"Ammageddon\", \"action\": \"FOLD\"}, " \
+                        "{\"name\": \"BigSiddyB\", \"action\": \"RAISE\", \"amount\": 0.02}, " \
+                        "{\"name\": \"sindyeichelbaum\", \"action\": \"RAISE\", \"amount\": 0.59}, " \
+                        "{\"name\": \"masterhodge\", \"action\": \"FOLD\"}, "\
+                        "{\"name\": \"pokerhero\", \"action\": \"FOLD\"}, " \
+                        "{\"name\": \"BigSiddyB\", \"action\": \"CALL\", \"amount\": 0.59}]}"
         assert expected in json
 
     def test_flop_actions(self, json_encoder):
@@ -242,28 +241,31 @@ class TestFullPokerstarsHand:
 
     def test_turn_card(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())
-        expected = "\"card\": {\"rank\": \"2\", \"suit\": \"HEARTS\"}"
+        expected = "{\"rank\": \"2\", \"suit\": \"HEARTS\"}"
         assert expected in json
 
     def test_turn_actions(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())
-        expected = "\"actions\": [\"ROMPAL76: checks\", \"heureka3: checks\"]"
+        expected = "\"actions\": [{\"name\": \"ROMPAL76\", \"action\": \"CHECK\"}, " \
+                   "{\"name\": \"heureka3\", \"action\": \"CHECK\"}]"
         assert expected in json
 
     def test_river_card(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())
-        expected = "\"card\": {\"rank\": \"2\", \"suit\": \"CLUBS\"}"
+        expected = "{\"rank\": \"2\", \"suit\": \"CLUBS\"}"
         assert expected in json
 
     def test_river_actions(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())
-        expected = "\"actions\": [\"ROMPAL76: bets $0.10\", \"heureka3: calls $0.10\"]"
+        expected = "\"actions\": [{\"name\": \"ROMPAL76\", \"action\": \"BET\", \"amount\": 0.1}, " \
+                   "{\"name\": \"heureka3\", \"action\": \"CALL\", \"amount\": 0.1}]"
         assert expected in json
 
     def test_winners(self, json_encoder):
         json = json_encoder.encode(get_parsed_hand())
-        # seems to be flaky sometimes, may change to check winners one by one
-        assert "\"winners\": [\"BigSiddyB\", \"sindyeichelbaum (button)\"]" in json
+        winners = re.search("\"winners\": \[(.*)\]", json).group(1)
+        assert "BigSiddyB" in winners
+        assert "sindyeichelbaum (button)" in winners
 
     def test_total_pot(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())

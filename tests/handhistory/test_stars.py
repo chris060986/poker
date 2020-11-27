@@ -284,8 +284,6 @@ class TestVillainCardsParsed:
                     _Player(name="masterhodge", stack=Decimal('1.80'), seat=9, combo=None),
                 ],
             ),
-            ("turn", Card("7c")),
-            ("river", Card("Ks")),
             ("board", (Card("3c"), Card("3h"), Card("3s"), Card("7c"), Card("Ks"))),
             ("total_pot", Decimal('1.29')),
             ("show_down", True),
@@ -345,12 +343,10 @@ class TestTournamentHand:
                     _Player(name="conor1409", stack=1500, seat=9, combo=None),
                 ],
             ),
-            ("turn", Card("4h")),
-            ("river", Card("As")),
             ("board", (Card("4c"), Card("7s"), Card("8h"), Card("4h"), Card("As"))),
             (
-                "preflop_actions",
-                (
+                "preflop", (_Street([
+                    "",
                     "SARA CONAR: raises 1440 to 1490 and is all-in",
                     "mikaela1209: folds",
                     "Stickyfinger55: folds",
@@ -360,17 +356,30 @@ class TestTournamentHand:
                     "Pavs777_89: folds",
                     "lrb3: calls 1465 and is all-in",
                     "ADINA.MM: folds",
-                ),
+                ])),
             ),
-            ("turn_actions", None),
-            ("river_actions", None),
+            (
+                "turn", (_Street([
+                    "[4c 7s 8h] [4h]",
+                ])),
+            ),
+            (
+                "river", (_Street([
+                    "[4c 7s 8h 4h] [As]",
+                ])),
+            ),
             ("total_pot", Decimal(3120)),
             ("show_down", True),
             ("winners", ("SARA CONAR",)),
         ],
     )
     def test_body(self, hand, attribute, expected_value):
-        assert getattr(hand, attribute) == expected_value
+        attribute = getattr(hand, attribute)
+        if (attribute is not None) & isinstance(attribute, _Street):
+            assert attribute.actions == expected_value.actions
+            assert attribute.cards == expected_value.cards
+        else:
+            assert attribute == expected_value
 
 
 class TestHandWithFlopOnly:
@@ -423,8 +432,8 @@ class TestHandWithFlopOnly:
             ("river", None),
             ("board", (Card("2s"), Card("6d"), Card("6h"))),
             (
-                "preflop_actions",
-                (
+                "preflop", (_Street([
+                    "",
                     "strongi82: folds",
                     "W2lkm2n: raises 40 to 60",
                     "MISTRPerfect: calls 60",
@@ -433,18 +442,23 @@ class TestHandWithFlopOnly:
                     "STBIJUJA: folds",
                     "flettl2: folds",
                     "santy312: folds",
-                    "flavio766: folds",
-                ),
+                    "flavio766: folds"
+                ])),
             ),
-            ("turn_actions", None),
-            ("river_actions", None),
+            ("turn", None),
+            ("river", None),
             ("total_pot", Decimal(150)),
             ("show_down", False),
             ("winners", ("W2lkm2n",)),
         ],
     )
     def test_body(self, hand, attribute, expected_value):
-        assert getattr(hand, attribute) == expected_value
+        attribute = getattr(hand, attribute)
+        if isinstance(attribute, _Street):
+            assert attribute.actions == expected_value.actions
+            assert attribute.cards == expected_value.cards
+        else:
+            assert attribute == expected_value
 
     @pytest.mark.parametrize(
         ("attribute", "expected_value"),
@@ -527,12 +541,10 @@ class TestAllinPreflopHand:
                     _Player(name="costamar", stack=13070, seat=9, combo=Combo('AcKd')),
                 ],
             ),
-            ("turn", Card("8d")),
-            ("river", Card("Ks")),
             ("board", (Card("3c"), Card("6s"), Card("9d"), Card("8d"), Card("Ks"))),
             (
-                "preflop_actions",
-                (
+                "preflop", (_Street([
+                    "",
                     "lkenny44: folds",
                     "Newfie_187: raises 155 to 955 and is all-in",
                     "Hokolix: folds",
@@ -543,17 +555,30 @@ class TestAllinPreflopHand:
                     "Labahra: folds",
                     "Lean Abadia: folds",
                     "Uncalled bet (1255) returned to costamar",
-                ),
+                ])),
             ),
-            ("turn_actions", None),
-            ("river_actions", None),
+            (
+                "turn", (_Street([
+                    "[3c 6s 9d] [8d]",
+                ])),
+            ),
+            (
+                "river", (_Street([
+                    "[3c 6s 9d 8d] [Ks]",
+                ])),
+            ),
             ("total_pot", Decimal(26310)),
             ("show_down", True),
             ("winners", ("costamar",)),
         ],
     )
     def test_body(self, hand, attribute, expected_value):
-        assert getattr(hand, attribute) == expected_value
+        attribute = getattr(hand, attribute)
+        if (attribute is not None) & isinstance(attribute, _Street):
+            assert attribute.actions == expected_value.actions
+            assert attribute.cards == expected_value.cards
+        else:
+            assert attribute == expected_value
 
     @pytest.mark.parametrize(
         ("attribute", "expected_value"),
@@ -634,8 +659,8 @@ class TestBodyMissingPlayerNoBoard:
             ("river", None),
             ("board", None),
             (
-                "preflop_actions",
-                (
+                "preflop", (_Street([
+                    "",
                     "EuSh0wTelm0: folds",
                     "panost3: folds",
                     "Samovlyblen: folds",
@@ -647,17 +672,20 @@ class TestBodyMissingPlayerNoBoard:
                     "Uncalled bet (600) returned to Theralion",
                     "Theralion collected 1900 from pot",
                     "Theralion: doesn't show hand",
-                ),
+                ])),
             ),
-            ("turn_actions", None),
-            ("river_actions", None),
             ("total_pot", Decimal(1900)),
             ("show_down", False),
             ("winners", ("Theralion",)),
         ],
     )
     def test_body(self, hand, attribute, expected_value):
-        assert getattr(hand, attribute) == expected_value
+        attribute = getattr(hand, attribute)
+        if (attribute is not None) & isinstance(attribute, _Street):
+            assert attribute.actions == expected_value.actions
+            assert attribute.cards == expected_value.cards
+        else:
+            assert attribute == expected_value
 
     def test_flop(self, hand):
         assert hand.flop is None
@@ -710,12 +738,10 @@ class TestBodyEveryStreet:
                     _Player(name="STBIJUJA", stack=1205, seat=9, combo=None),
                 ],
             ),
-            ("turn", Card("8c")),
-            ("river", Card("Kd")),
             ("board", (Card("6s"), Card("4d"), Card("3s"), Card("8c"), Card("Kd"))),
             (
-                "preflop_actions",
-                (
+                "preflop", (_Street([
+                    "",
                     "sinus91: folds",
                     "STBIJUJA: folds",
                     "flettl2: raises 125 to 225",
@@ -725,26 +751,26 @@ class TestBodyEveryStreet:
                     "W2lkm2n: folds",
                     "MISTRPerfect: folds",
                     "blak_douglas: calls 125",
-                ),
+                ])),
             ),
             (
-                "turn_actions",
-                (
+                "turn", (_Street([
+                    "[6s 4d 3s] [8c]",
                     "blak_douglas: checks",
                     "flettl2: bets 250",
                     "blak_douglas: calls 250",
-                ),
+                ])),
             ),
             (
-                "river_actions",
-                (
+                "river", (_Street([
+                    "[6s 4d 3s 8c] [Kd]",
                     "blak_douglas: checks",
                     "flettl2: bets 1300",
                     "blak_douglas: folds",
                     "Uncalled bet (1300) returned to flettl2",
                     "flettl2 collected 1300 from pot",
                     "flettl2: doesn't show hand",
-                ),
+                ])),
             ),
             ("total_pot", Decimal(1300)),
             ("show_down", False),
@@ -752,7 +778,12 @@ class TestBodyEveryStreet:
         ],
     )
     def test_body(self, hand, attribute, expected_value):
-        assert getattr(hand, attribute) == expected_value
+        attribute = getattr(hand, attribute)
+        if (attribute is not None) & isinstance(attribute, _Street):
+            assert attribute.actions == expected_value.actions
+            assert attribute.cards == expected_value.cards
+        else:
+            assert attribute == expected_value
 
     @pytest.mark.parametrize(
         ("attribute", "expected_value"),

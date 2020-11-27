@@ -113,13 +113,13 @@ class HandHistoryHandler(BaseHandler):
             data['preflop'] = {'actions': preflop_actions}
 
         if obj.flop is not None:
-            data['flop'] = self.context.flatten(obj.flop, reset=True);
+            data['flop'] = self.context.flatten(obj.flop, reset=True)
 
         if obj.turn is not None:
-            data['turn'] = self.context.flatten(obj.turn, reset=True);
+            data['turn'] = self.context.flatten(obj.turn, reset=True)
 
         if obj.river is not None:
-            data['turn'] = self.context.flatten(obj.river, reset=True);
+            data['river'] = self.context.flatten(obj.river, reset=True)
 
         if obj.board is not None:
             board_ = [self.context.flatten(card, reset=True) for card in obj.board]

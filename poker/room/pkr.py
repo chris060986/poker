@@ -100,6 +100,7 @@ class PKRHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory):
         self._parse_button()
         self._parse_hero()
         self._parse_preflop()
+        # TODO: use same mechanism than at pokerstars
         self._parse_flop()
         self._parse_street("turn")
         self._parse_street("river")
