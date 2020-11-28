@@ -95,9 +95,10 @@ class _BaseStreet:
         self.pot = None
         self.actions = None
         self.cards = None
-        self._parse_cards(flop[0])
+        if(flop[0]):
+            self._parse_cards(flop[0])
+            self._all_combinations = itertools.combinations(self.cards, 2)
         self._parse_actions(flop[1:])
-        self._all_combinations = itertools.combinations(self.cards, 2)
 
     @cached_property
     def is_rainbow(self):
@@ -179,9 +180,9 @@ class _BaseHandHistory:
         if self.flop:
             board.extend(self.flop.cards)
             if self.turn:
-                board.append(self.turn)
+                board.append(self.turn.cards[3])
                 if self.river:
-                    board.append(self.river)
+                    board.append(self.river.cards[4])
         return tuple(board) if board else None
 
     def _parse_date(self, date_string):

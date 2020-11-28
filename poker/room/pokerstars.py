@@ -11,14 +11,19 @@ from ..card import Card
 from ..hand import Combo
 from ..constants import Limit, Game, GameType, Currency, Action, MoneyType
 
-
 __all__ = ["PokerStarsHandHistory", "Notes"]
 
 
 @implementer(hh.IStreet)
 class _Street(hh._BaseStreet):
     def _parse_cards(self, boardline):
-        self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]))
+        if len(boardline) == 10:
+            self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]))
+        if len(boardline) == 15:
+            self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]), Card(boardline[12:14]))
+        if len(boardline) == 18:
+            self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]),
+                          Card(boardline[10:12]), Card(boardline[15:17]))
 
     def _parse_actions(self, actionlines):
         actions = []
@@ -33,16 +38,20 @@ class _Street(hh._BaseStreet):
                 continue
             elif ":" in line:
                 action = self._parse_player_action(line)
+            elif "leaves" in line:
+                continue
             else:
                 raise RuntimeError("bad action line: " + line)
 
             actions.append(hh._PlayerAction(*action))
         self.actions = tuple(actions) if actions else None
 
+    # TODO: all currency symobols should be removed
     def _parse_uncalled(self, line):
         first_paren_index = line.find("(")
         second_paren_index = line.find(")")
-        amount = line[first_paren_index + 1 : second_paren_index]
+        amount = line[first_paren_index + 1: second_paren_index]
+        amount = str.replace(amount, "$", "")
         name_start_index = line.find("to ") + 3
         name = line[name_start_index:]
         return name, Action.RETURN, Decimal(amount)
@@ -52,7 +61,8 @@ class _Street(hh._BaseStreet):
         name = line[:first_space_index]
         second_space_index = line.find(" ", first_space_index + 1)
         third_space_index = line.find(" ", second_space_index + 1)
-        amount = line[second_space_index + 1 : third_space_index]
+        amount = line[second_space_index + 1: third_space_index]
+        amount = str.replace(amount, "$", "")
         self.pot = Decimal(amount)
         return name, Action.WIN, self.pot
 
@@ -179,9 +189,9 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         self._parse_button()
         self._parse_hero()
         self._parse_preflop()
-        self._parse_flop()
-        self._parse_street("turn")
-        self._parse_street("river")
+        self._parse_street("FLOP")
+        self._parse_street("TURN")
+        self._parse_street("RIVER")
         self._parse_showdown()
         self._parse_pot()
         self._parse_board()
@@ -226,31 +236,29 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
     def _parse_preflop(self):
         start = self._sections[0] + 3
         stop = self._sections[1]
-        self.preflop_actions = tuple(self._splitted[start:stop])
+        nocards = [""]  # cause no cards are dealt
+        nocards.extend(self._splitted[start:stop])
+        preflop = _Street(nocards)
+        self.preflop = preflop
 
-    def _parse_flop(self):
+    def _parse_street(self, street_name):
         try:
-            start = self._splitted.index("FLOP") + 1
+            start = self._splitted.index(street_name) + 1
         except ValueError:
-            self.flop = None
-            return
-        stop = self._splitted.index("", start)
-        floplines = self._splitted[start:stop]
-        self.flop = _Street(floplines)
-
-    def _parse_street(self, street):
-        try:
-            start = self._splitted.index(street.upper()) + 2
-            stop = self._splitted.index("", start)
-            street_actions = self._splitted[start:stop]
             setattr(
                 self,
-                f"{street.lower()}_actions",
-                tuple(street_actions) if street_actions else None,
+                f"{street_name.lower()}",
+                None,
             )
-        except ValueError:
-            setattr(self, street, None)
-            setattr(self, f"{street.lower()}_actions", None)
+            return
+        stop = self._splitted.index("", start)
+        streetlines = self._splitted[start:stop]
+        street = _Street(streetlines)
+        setattr(
+            self,
+            f"{street_name.lower()}",
+            street,
+        )
 
     def _parse_showdown(self):
         self.show_down = "SHOW DOWN" in self._splitted
@@ -264,9 +272,14 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         boardline = self._splitted[self._sections[-1] + 3]
         if not boardline.startswith("Board"):
             return
-        cards = self._board_re.findall(boardline)
-        self.turn = Card(cards[3]) if len(cards) > 3 else None
-        self.river = Card(cards[4]) if len(cards) > 4 else None
+        cardsstr = self._board_re.findall(boardline)
+        i = 0
+        # value is not needed to set cause board is populated by property in
+        # _BaseHandHistory#board
+        for card in cardsstr:
+            if self.board[i] != Card(card):
+                raise RuntimeError("Boardcard not in Board as expected")
+            i += 1
 
     def _parse_winners(self):
         winners = set()
@@ -280,7 +293,7 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
                 seat = int(match.group(1))
                 playername = match.group(2)
                 split = match.group(3).split()
-                playerCombo = Combo.from_cards(Card(split[0]),Card( split[1]))
+                playerCombo = Combo.from_cards(Card(split[0]), Card(split[1]))
                 self.players[seat - 1].combo = playerCombo
                 winners.add(playername)
 
