@@ -83,6 +83,35 @@ PokerStars Hand #152455023342: Tournament #1545783901, Freeroll  Hold'em No Limi
         assert getattr(hand_header, attribute) == expected_value
 
 
+class TestActionTypes():
+    @pytest.mark.parametrize(
+        ("action_line, expected"),
+        [
+            ({"MISTER FM is disconnected"}, None),
+            ({"MISTER FM is connected"}, None),
+            ({"susipoo: checks"}, _PlayerAction(name="susipoo", action=Action.CHECK, amount=None)),
+            ({"susipoo: folds"}, _PlayerAction(name="susipoo", action=Action.FOLD, amount=None)),
+            ({"susipoo: doesn't show hand "}, _PlayerAction(name="susipoo", action=Action.MUCK, amount=None)),
+            ({"Uncalled bet ($0.15) returned to susipoo"}, _PlayerAction(name="susipoo", action=Action.RETURN, amount=Decimal('0.15'))),
+            ({"susipoo collected $0.34 from pot"}, _PlayerAction(name="susipoo", action=Action.WIN, amount=Decimal('0.34'))),
+            ({"Just God Spb: raises $0.10 to $0.15"}, _PlayerAction(name="Just God Spb", action=Action.RAISE, amount=Decimal('0.10'))),
+            ({"susipoo: bets $0.25"}, _PlayerAction(name="susipoo", action=Action.BET, amount=Decimal('0.25'))),
+            ({"susipoo leaves the table"}, None),
+            ({"susipoo cashed out the hand for $1.67 | Cash Out Fee $0.02"}, None),
+            ({"susipoo cashed out the hand for $1.53 | Cash Out Fee $0.02"}, None),
+            ({"susipoo cashed out the hand for $0.29"}, None),
+            ({"susipoo was removed from the table for failing to post"}, None),
+        ],
+    )
+    def test_action_parsed(self, action_line, expected):
+        street = _Street(["[\"2s 6d 6h]\""])
+        street._parse_actions(action_line)
+        if street.actions is not None:
+            assert street.actions[0] == expected
+        else:
+            assert None is expected
+
+
 class TestParseBetCashGame:
 
     @pytest.mark.parametrize(

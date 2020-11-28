@@ -40,6 +40,12 @@ class _Street(hh._BaseStreet):
                 action = self._parse_player_action(line)
             elif "leaves" in line:
                 continue
+            elif "connected" in line: # also includes disconnected
+                continue
+            elif "cashed out" in line:
+                continue
+            elif "removed from the table" in line:
+                continue
             else:
                 raise RuntimeError("bad action line: " + line)
 
