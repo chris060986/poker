@@ -95,9 +95,10 @@ class _BaseStreet:
         self.pot = None
         self.actions = None
         self.cards = None
-        if(flop[0]):
+        if flop[0]:
             self._parse_cards(flop[0])
-            self._all_combinations = itertools.combinations(self.cards, 2)
+            if self.cards is not None:
+                self._all_combinations = itertools.combinations(self.cards, 2)
         self._parse_actions(flop[1:])
 
     @cached_property
