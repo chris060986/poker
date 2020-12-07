@@ -270,3 +270,8 @@ class TestFullPokerstarsHand:
     def test_total_pot(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())
         assert "\"total_pot\": 0.49" in json
+
+    def test_earnings(self, json_encoder):
+        json = json_encoder.encode(get_parsed_flop_hand13())
+        print(json)
+        assert "\"earnings\": -0.05" in json

@@ -210,6 +210,7 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
 
     def _calculate_earnings(self):
         # TODO: Cash out is not calculated
+        # TODO: respect SB and BB
         earnings = Decimal(0)
         all_actions = []
         print(all_actions)
