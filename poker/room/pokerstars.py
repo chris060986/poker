@@ -43,6 +43,7 @@ class _Street(hh._BaseStreet):
             elif "connected" in line: # also includes disconnected
                 continue
             elif "cashed out" in line:
+                # TODO: Parse for earnings calculation
                 continue
             elif "removed from the table" in line:
                 continue
@@ -202,9 +203,32 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         self._parse_pot()
         self._parse_board()
         self._parse_winners()
+        self._calculate_earnings()
 
         self._del_split_vars()
         self.parsed = True
+
+    def _calculate_earnings(self):
+        # TODO: Cash out is not calculated
+        earnings = Decimal(0)
+        all_actions = []
+        print(all_actions)
+        if self.preflop is not None and self.preflop.actions is not None:
+            all_actions.extend(list(filter(lambda action : action.name == self.hero.name, self.preflop.actions)))
+        if self.flop is not None and self.flop.actions is not None:
+            all_actions.extend(list(filter(lambda action : action.name == self.hero.name, self.flop.actions)))
+        if self.turn is not None and self.turn.actions is not None:
+            all_actions.extend(list(filter(lambda action: action.name == self.hero.name, self.turn.actions)))
+        if self.river is not None and self.river.actions is not None:
+            all_actions.extend(list(filter(lambda action : action.name == self.hero.name, self.river.actions)))
+
+        for action in all_actions:
+            if action.action in [Action.BET, Action.RAISE, Action.CALL]:
+                earnings -= action.amount
+            elif action.action == Action.WIN:
+                earnings += action.amount
+        self.earnings = earnings
+
 
     def _parse_table(self):
         self._table_match = self._table_re.match(self._splitted[1])
