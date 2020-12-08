@@ -392,6 +392,8 @@ class TestTournamentHand:
             (
                 "preflop", (_Street([
                     "",
+                    "lrb3: posts small blind 25",
+                    "ADINA.MM: posts big blind 50",
                     "SARA CONAR: raises 1440 to 1490 and is all-in",
                     "mikaela1209: folds",
                     "Stickyfinger55: folds",
@@ -479,6 +481,8 @@ class TestHandWithFlopOnly:
             (
                 "preflop", (_Street([
                     "",
+                    "santy312: posts small blind 10",
+                    "flavio766: posts big blind 20",
                     "strongi82: folds",
                     "W2lkm2n: raises 40 to 60",
                     "MISTRPerfect: calls 60",
@@ -590,6 +594,8 @@ class TestAllinPreflopHand:
             (
                 "preflop", (_Street([
                     "",
+                    "Labahra: posts small blind 400",
+                    "Lean Abadia: posts big blind 800",
                     "lkenny44: folds",
                     "Newfie_187: raises 155 to 955 and is all-in",
                     "Hokolix: folds",
@@ -706,6 +712,8 @@ class TestBodyMissingPlayerNoBoard:
             (
                 "preflop", (_Street([
                     "",
+                    "fischero68: posts small blind 300",
+                    "snelle_jel: posts big blind 600",
                     "EuSh0wTelm0: folds",
                     "panost3: folds",
                     "Samovlyblen: folds",
@@ -787,6 +795,8 @@ class TestBodyEveryStreet:
             (
                 "preflop", (_Street([
                     "",
+                    "MISTRPerfect: posts small blind 50",
+                    "blak_douglas: posts big blind 100",
                     "sinus91: folds",
                     "STBIJUJA: folds",
                     "flettl2: raises 125 to 225",
