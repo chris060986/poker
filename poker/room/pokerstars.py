@@ -323,6 +323,8 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
                 if bool(match):
                     action = match.group("name"), Action(match.group("action")), Decimal(match.group("amount"))
                     self._cash_out_actions.append(hh._PlayerAction(*action))
+        else:
+            self._cash_out_actions = None
 
     def _parse_pot(self):
         potline = self._splitted[self._sections[-1] + 2]
