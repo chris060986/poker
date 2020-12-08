@@ -16,6 +16,10 @@ __all__ = ["PokerStarsHandHistory", "Notes"]
 
 @implementer(hh.IStreet)
 class _Street(hh._BaseStreet):
+
+    _blind_re = re.compile(
+        r"""^(?P<name>.+?): posts (?P<blind>\w+\s\w+) [\D]?(?P<amount>(\d+(?:\.\d+)?))""")
+
     def _parse_cards(self, boardline):
         if len(boardline) == 10:
             self.cards = (Card(boardline[1:3]), Card(boardline[4:6]), Card(boardline[7:9]))
@@ -36,6 +40,8 @@ class _Street(hh._BaseStreet):
                 action = self._parse_muck(line)
             elif ' said, "' in line:  # skip chat lines
                 continue
+            elif "posts" in line:
+                action = self._parse_blind(line)
             elif ":" in line:
                 action = self._parse_player_action(line)
             elif "leaves" in line:
@@ -88,6 +94,10 @@ class _Street(hh._BaseStreet):
             return name, Action(action), Decimal(amount)
         else:
             return name, Action(action), None
+
+    def _parse_blind(self, line):
+        match = self._blind_re.match(line)
+        return match.group("name"), Action(match.group("blind")), Decimal(match.group("amount"))
 
 
 @implementer(hh.IHandHistory)

@@ -58,6 +58,8 @@ class MoneyType(PokerEnum):
 
 
 class Action(PokerEnum):
+    BB = "bb", "big blind"
+    SB = "sb", "small blind"
     BET = "bet", "bets"
     RAISE = "raise", "raises"
     CHECK = "check", "checks"

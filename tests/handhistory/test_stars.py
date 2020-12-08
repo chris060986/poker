@@ -112,6 +112,22 @@ class TestActionTypes():
             assert None is expected
 
 
+    @pytest.mark.parametrize(
+        ("action_line, expected"),
+        [
+            ({"Olefild1983: posts small blind $0.02"}, _PlayerAction(name="Olefild1983", action=Action.SB, amount=Decimal('0.02'))),
+            ({"flopec715: posts big blind $0.05"}, _PlayerAction(name="flopec715", action=Action.BB, amount=Decimal('0.05'))),
+        ],
+    )
+    def test_blind_action_parsed(self, action_line, expected):
+        street = _Street(["[\"2s 6d 6h]\""])
+        street._parse_actions(action_line)
+        if street.actions is not None:
+            assert street.actions[0] == expected
+        else:
+            assert None is expected
+
+
 class TestParseBetCashGame:
 
     @pytest.mark.parametrize(
