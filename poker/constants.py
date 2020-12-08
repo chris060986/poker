@@ -70,6 +70,7 @@ class Action(PokerEnum):
     SHOW = ("show",)
     MUCK = "don't show", "didn't show", "did not show", "mucks"
     THINK = ("seconds left to act",)
+    CASH_OUT = ("cashed out", "cash out")
 
 
 class Position(PokerEnum):

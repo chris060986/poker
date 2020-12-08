@@ -81,6 +81,13 @@ def get_parsed_flop_hand13():
     return hh
 
 
+def get_parsed_flop_hand14():
+    hand_text = stars_hands.HAND14
+    hh = PokerStarsHandHistory(hand_text)
+    hh.parse()
+    return hh
+
+
 class TestFullPokerstarsHand:
 
     def test_board(self, json_encoder):
@@ -275,5 +282,9 @@ class TestFullPokerstarsHand:
 
     def test_earnings(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())
-        print(json)
         assert "\"earnings\": -0.05" in json
+
+    def test_cash_out(self, json_encoder):
+        json = json_encoder.encode(get_parsed_flop_hand14())
+        print(json)
+        assert "\"earnings\": -1.77" in json

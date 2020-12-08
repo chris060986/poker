@@ -49,7 +49,7 @@ class _Street(hh._BaseStreet):
             elif "connected" in line: # also includes disconnected
                 continue
             elif "cashed out" in line:
-                # TODO: Parse for earnings calculation
+                # cash outs are not actions, parsed at showdown
                 continue
             elif "removed from the table" in line:
                 continue
@@ -145,6 +145,7 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
     _showdown_re = re.compile(r"^Seat (\d+): (.+?) showed \[(.+?)\] and won")
     _ante_re = re.compile(r".*posts the ante (\d+(?:\.\d+)?)")
     _board_re = re.compile(r"(?<=[\[ ])(..)(?=[\] ])")
+    _cash_out_re = re.compile(r"^(?P<name>.+?) (?P<action>cashed out) the hand for [\D](?P<amount>(\d+(?:\.\d+)?))")
 
     def parse_header(self):
         # sections[0] is before HOLE CARDS
@@ -219,11 +220,8 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         self.parsed = True
 
     def _calculate_earnings(self):
-        # TODO: Cash out is not calculated
-        # TODO: respect SB and BB
         earnings = Decimal(0)
         all_actions = []
-        print(all_actions)
         if self.preflop is not None and self.preflop.actions is not None:
             all_actions.extend(list(filter(lambda action : action.name == self.hero.name, self.preflop.actions)))
         if self.flop is not None and self.flop.actions is not None:
@@ -232,11 +230,13 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
             all_actions.extend(list(filter(lambda action: action.name == self.hero.name, self.turn.actions)))
         if self.river is not None and self.river.actions is not None:
             all_actions.extend(list(filter(lambda action : action.name == self.hero.name, self.river.actions)))
+        if self._cash_out_actions is not None:
+            all_actions.extend(self._cash_out_actions)
 
         for action in all_actions:
             if action.action in [Action.BET, Action.RAISE, Action.CALL, Action.SB, Action.BB]:
                 earnings -= action.amount
-            elif action.action == Action.WIN:
+            elif action.action in [Action.WIN, Action.CASH_OUT]:
                 earnings += action.amount
         self.earnings = earnings
 
@@ -314,6 +314,15 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
 
     def _parse_showdown(self):
         self.show_down = "SHOW DOWN" in self._splitted
+        if self.show_down:
+            start_showdown =self._splitted.index("SHOW DOWN")
+            end_showdown = self._splitted.index("SUMMARY")
+            self._cash_out_actions = []
+            for line in self._splitted[start_showdown:end_showdown]:
+                match = self._cash_out_re.match(line)
+                if bool(match):
+                    action = match.group("name"), Action(match.group("action")), Decimal(match.group("amount"))
+                    self._cash_out_actions.append(hh._PlayerAction(*action))
 
     def _parse_pot(self):
         potline = self._splitted[self._sections[-1] + 2]
