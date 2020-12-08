@@ -234,7 +234,7 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
             all_actions.extend(list(filter(lambda action : action.name == self.hero.name, self.river.actions)))
 
         for action in all_actions:
-            if action.action in [Action.BET, Action.RAISE, Action.CALL]:
+            if action.action in [Action.BET, Action.RAISE, Action.CALL, Action.SB, Action.BB]:
                 earnings -= action.amount
             elif action.action == Action.WIN:
                 earnings += action.amount
@@ -248,18 +248,25 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
 
     def _parse_players(self):
         self.players = self._init_seats(self.max_players)
-        for line in self._splitted[2:]:
+        for line in self._splitted[2:self._sections[0]]:
             match = self._seat_re.match(line)
+            if bool(match):
+                index = int(match.group("seat")) - 1
+                self.players[index] = hh._Player(
+                    name=match.group("name"),
+                    stack=Decimal(match.group("stack")),
+                    seat=int(match.group("seat")),
+                    combo=None,
+                )
             # we reached the end of the players section
-            if not match:
-                break
-            index = int(match.group("seat")) - 1
-            self.players[index] = hh._Player(
-                name=match.group("name"),
-                stack=Decimal(match.group("stack")),
-                seat=int(match.group("seat")),
-                combo=None,
-            )
+            else:
+                if "posts small blind" in line:
+                    self._small_blind_line = line
+                elif "posts big blind" in line:
+                    self._big_blind_line = line
+                # else ignore
+
+
 
     def _parse_button(self):
         button_seat = int(self._table_match.group("button"))
@@ -278,6 +285,10 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         start = self._sections[0] + 3
         stop = self._sections[1]
         nocards = [""]  # cause no cards are dealt
+        if self._small_blind_line is not None:
+            nocards.append(self._small_blind_line)
+        if self._big_blind_line is not None:
+            nocards.append(self._big_blind_line)
         nocards.extend(self._splitted[start:stop])
         preflop = _Street(nocards)
         self.preflop = preflop
