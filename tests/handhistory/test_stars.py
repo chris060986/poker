@@ -112,6 +112,22 @@ class TestActionTypes():
             assert None is expected
 
 
+    @pytest.mark.parametrize(
+        ("action_line, expected"),
+        [
+            ({"Olefild1983: posts small blind $0.02"}, _PlayerAction(name="Olefild1983", action=Action.SB, amount=Decimal('0.02'))),
+            ({"flopec715: posts big blind $0.05"}, _PlayerAction(name="flopec715", action=Action.BB, amount=Decimal('0.05'))),
+        ],
+    )
+    def test_blind_action_parsed(self, action_line, expected):
+        street = _Street(["[\"2s 6d 6h]\""])
+        street._parse_actions(action_line)
+        if street.actions is not None:
+            assert street.actions[0] == expected
+        else:
+            assert None is expected
+
+
 class TestParseBetCashGame:
 
     @pytest.mark.parametrize(
@@ -376,6 +392,8 @@ class TestTournamentHand:
             (
                 "preflop", (_Street([
                     "",
+                    "lrb3: posts small blind 25",
+                    "ADINA.MM: posts big blind 50",
                     "SARA CONAR: raises 1440 to 1490 and is all-in",
                     "mikaela1209: folds",
                     "Stickyfinger55: folds",
@@ -463,6 +481,8 @@ class TestHandWithFlopOnly:
             (
                 "preflop", (_Street([
                     "",
+                    "santy312: posts small blind 10",
+                    "flavio766: posts big blind 20",
                     "strongi82: folds",
                     "W2lkm2n: raises 40 to 60",
                     "MISTRPerfect: calls 60",
@@ -574,6 +594,8 @@ class TestAllinPreflopHand:
             (
                 "preflop", (_Street([
                     "",
+                    "Labahra: posts small blind 400",
+                    "Lean Abadia: posts big blind 800",
                     "lkenny44: folds",
                     "Newfie_187: raises 155 to 955 and is all-in",
                     "Hokolix: folds",
@@ -690,6 +712,8 @@ class TestBodyMissingPlayerNoBoard:
             (
                 "preflop", (_Street([
                     "",
+                    "fischero68: posts small blind 300",
+                    "snelle_jel: posts big blind 600",
                     "EuSh0wTelm0: folds",
                     "panost3: folds",
                     "Samovlyblen: folds",
@@ -771,6 +795,8 @@ class TestBodyEveryStreet:
             (
                 "preflop", (_Street([
                     "",
+                    "MISTRPerfect: posts small blind 50",
+                    "blak_douglas: posts big blind 100",
                     "sinus91: folds",
                     "STBIJUJA: folds",
                     "flettl2: raises 125 to 225",

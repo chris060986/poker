@@ -125,6 +125,9 @@ class HandHistoryHandler(BaseHandler):
             board_ = [self.context.flatten(card, reset=True) for card in obj.board]
             data['board'] = board_
         data['winners'] = obj.winners
+
+        if obj.earnings is not None:
+            data['earnings'] = float(obj.earnings)
         return data
 
     def restore(self, obj):

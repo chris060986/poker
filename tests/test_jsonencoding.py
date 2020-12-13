@@ -81,6 +81,13 @@ def get_parsed_flop_hand13():
     return hh
 
 
+def get_parsed_flop_hand14():
+    hand_text = stars_hands.HAND14
+    hh = PokerStarsHandHistory(hand_text)
+    hh.parse()
+    return hh
+
+
 class TestFullPokerstarsHand:
 
     def test_board(self, json_encoder):
@@ -183,7 +190,9 @@ class TestFullPokerstarsHand:
 
     def test_preflop(self, json_encoder):
         json = json_encoder.encode(get_parsed_hand())
-        expected = "\"preflop\": {\"actions\": [{\"name\": \"oeggel\", \"action\": \"FOLD\"}, " \
+        expected = "\"preflop\": {\"actions\": [{\"name\": \"masterhodge\", \"action\": \"SB\", \"amount\": 0.01}, " \
+                        "{\"name\": \"pokerhero\", \"action\": \"BB\", \"amount\": 0.02}, " \
+                        "{\"name\": \"oeggel\", \"action\": \"FOLD\"}, " \
                         "{\"name\": \"3_Socks420\", \"action\": \"FOLD\"}, " \
                         "{\"name\": \"Laandris09\", \"action\": \"FOLD\"}, " \
                         "{\"name\": \"Ammageddon\", \"action\": \"FOLD\"}, " \
@@ -270,3 +279,12 @@ class TestFullPokerstarsHand:
     def test_total_pot(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())
         assert "\"total_pot\": 0.49" in json
+
+    def test_earnings(self, json_encoder):
+        json = json_encoder.encode(get_parsed_flop_hand13())
+        assert "\"earnings\": -0.05" in json
+
+    def test_cash_out(self, json_encoder):
+        json = json_encoder.encode(get_parsed_flop_hand14())
+        print(json)
+        assert "\"earnings\": -1.77" in json
