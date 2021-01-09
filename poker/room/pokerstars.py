@@ -345,24 +345,6 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         else:
             self.show_down = None
 
-    def _parse_showdown_old(self):
-        if "SHOW DOWN" in self._splitted:
-            showdown = []
-            start_showdown =self._splitted.index("SHOW DOWN")
-            end_showdown = self._splitted.index("SUMMARY")
-            for line in self._splitted[start_showdown:end_showdown]:
-                match = self._cash_out_re.match(line)
-                if bool(match):
-                    action = match.group("name"), Action(match.group("action")), Decimal(match.group("amount"))
-                    showdown.append(hh._PlayerAction(*action))
-                    continue
-                match = self._winner_re.match(line)
-                # if(bool(match)):
-                #     action = match.group()
-
-        else:
-            self._cash_out_actions = None
-
     def _parse_pot(self):
         potline = self._splitted[self._sections[-1] + 2]
         match = self._pot_re.match(potline)
