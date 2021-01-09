@@ -67,7 +67,7 @@ class Action(PokerEnum):
     CALL = "call", "calls"
     RETURN = "return", "returned", "uncalled"
     WIN = "win", "won", "collected"
-    SHOW = ("show",)
+    SHOW = ("show", "shows")
     MUCK = "don't show", "didn't show", "did not show", "mucks"
     THINK = ("seconds left to act",)
     CASH_OUT = ("cashed out", "cash out")

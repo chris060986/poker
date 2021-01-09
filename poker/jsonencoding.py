@@ -93,7 +93,6 @@ class HandHistoryHandler(BaseHandler):
         data['max-players'] = obj.max_players
         data['hero'] = obj.hero.name
         data['button'] = obj.button.name
-        data['showdown'] = str(obj.show_down)
         if obj.total_pot is not None:
             data['total_pot'] = float(obj.total_pot)
         if obj.rake is not None:
@@ -120,6 +119,9 @@ class HandHistoryHandler(BaseHandler):
 
         if obj.river is not None:
             data['river'] = self.context.flatten(obj.river, reset=True)
+
+        if obj.show_down is not None:
+            data['show_down'] = self.context.flatten(obj.show_down, reset=True)
 
         if obj.board is not None:
             board_ = [self.context.flatten(card, reset=True) for card in obj.board]
