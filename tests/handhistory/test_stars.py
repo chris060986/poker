@@ -535,8 +535,7 @@ class TestHandWithFlopOnly:
             ("has_straightdraw", False),
             ("has_gutshot", True),
             ("has_flushdraw", False),
-            ("players", ("W2lkm2n", "MISTRPerfect")),
-            ("pot", Decimal(150)),
+            ("players", ("W2lkm2n", "MISTRPerfect"))
         ],
     )
     def test_flop_attributes(self, hand, attribute, expected_value):
