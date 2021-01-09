@@ -186,7 +186,9 @@ class TestFullPokerstarsHand:
 
     def test_has_showdown(self, json_encoder):
         json = json_encoder.encode(get_parsed_hand())
-        assert "\"showdown\": \"True\"" in json
+        expected = "\"show_down\": {\"actions\": [{\"name\": \"BigSiddyB\", \"action\": \"WIN\", \"amount\": 0.62}, " \
+                        "{\"name\": \"sindyeichelbaum\", \"action\": \"WIN\", \"amount\": 0.62}]}"
+        assert expected in json
 
     def test_preflop(self, json_encoder):
         json = json_encoder.encode(get_parsed_hand())

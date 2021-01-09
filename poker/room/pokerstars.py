@@ -21,10 +21,14 @@ class _Street(hh._BaseStreet):
             r"""^(?P<name>.+?): posts (?P<blind>\w+\s\w+) [\D]?(?P<amount>(\d+(?:\.\d+)?))""")
 
     _raise_re = re.compile(
-        r"""^(?P<name>.+?): raises \$?(?P<raise>(\d+(?:\.\d+)?)) to \$?(?P<amount>(\d+(?:\.\d+)?))""")
+        r"""^(?P<name>.+?): raises \D?(?P<raise>(\d+(?:\.\d+)?)) to \D?(?P<amount>(\d+(?:\.\d+)?))""")
 
     _cash_out_re = re.compile(
         r"^(?P<name>.+?) (?P<action>cashed out) the hand for [\D](?P<amount>(\d+(?:\.\d+)?))")
+
+    _collected_re = re.compile(
+        r"""^(?P<name>.+?) collected \D?(?P<amount>(\d+(?:\.\d+)?))"""
+    )
 
     def _parse_cards(self, boardline):
         if len(boardline) == 10:
@@ -61,6 +65,12 @@ class _Street(hh._BaseStreet):
             elif "shows" in line:
                 # shows is ignored at the moment
                 continue
+            elif "mucks" in line:
+                # muck is ignored at the moment
+                continue
+            elif "finished" in line:
+                # muck is ignored at the moment
+                continue
             elif ":" in line:
                 action = self._parse_player_action(line)
             else:
@@ -79,16 +89,6 @@ class _Street(hh._BaseStreet):
         name = line[name_start_index:]
         return name, Action.RETURN, Decimal(amount)
 
-    def _parse_collected(self, line):
-        first_space_index = line.find(" ")
-        name = line[:first_space_index]
-        second_space_index = line.find(" ", first_space_index + 1)
-        third_space_index = line.find(" ", second_space_index + 1)
-        amount = line[second_space_index + 1: third_space_index]
-        amount = str.replace(amount, "$", "")
-        self.pot = Decimal(amount)
-        return name, Action.WIN, self.pot
-
     def _parse_muck(self, line):
         colon_index = line.find(":")
         name = line[:colon_index]
@@ -104,6 +104,10 @@ class _Street(hh._BaseStreet):
             return name, Action(action), Decimal(amount)
         else:
             return name, Action(action), None
+
+    def _parse_collected(self, line):
+        match = self._collected_re.match(line)
+        return match.group("name"), Action.WIN, Decimal(match.group("amount"))
 
     def _parse_raise(self, line):
         match = self._raise_re.match(line)
@@ -338,6 +342,8 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
             showdown_lines.extend(self._splitted[start_showdown+1:end_showdown-1])
             street = _Street(showdown_lines)
             self.show_down = street
+        else:
+            self.show_down = None
 
     def _parse_showdown_old(self):
         if "SHOW DOWN" in self._splitted:

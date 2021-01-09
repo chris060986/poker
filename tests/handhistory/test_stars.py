@@ -97,9 +97,9 @@ class TestActionTypes():
             ({"Just God Spb: raises $0.10 to $0.15"}, _PlayerAction(name="Just God Spb", action=Action.RAISE, amount=Decimal('0.15'))),
             ({"susipoo: bets $0.25"}, _PlayerAction(name="susipoo", action=Action.BET, amount=Decimal('0.25'))),
             ({"susipoo leaves the table"}, None),
-            ({"susipoo cashed out the hand for $1.67 | Cash Out Fee $0.02"}, None),
-            ({"susipoo cashed out the hand for $1.53 | Cash Out Fee $0.02"}, None),
-            ({"susipoo cashed out the hand for $0.29"}, None),
+            ({"susipoo cashed out the hand for $1.67 | Cash Out Fee $0.02"}, _PlayerAction(name="susipoo", action=Action.CASH_OUT, amount=Decimal('1.67'))),
+            ({"susipoo cashed out the hand for $1.53 | Cash Out Fee $0.02"}, _PlayerAction(name="susipoo", action=Action.CASH_OUT, amount=Decimal('1.53'))),
+            ({"susipoo cashed out the hand for $0.29"}, _PlayerAction(name="susipoo", action=Action.CASH_OUT, amount=Decimal('0.29'))),
             ({"susipoo was removed from the table for failing to post"}, None),
         ],
     )
@@ -331,7 +331,6 @@ class TestVillainCardsParsed:
             ),
             ("board", (Card("3c"), Card("3h"), Card("3s"), Card("7c"), Card("Ks"))),
             ("total_pot", Decimal('1.29')),
-            ("show_down", True),
         ],
     )
     def test_body(self, hand, attribute, expected_value):
@@ -416,7 +415,11 @@ class TestTournamentHand:
                 ])),
             ),
             ("total_pot", Decimal(3120)),
-            ("show_down", True),
+            (
+                "show_down", (_Street(["",
+                    "SARA CONAR collected 3120 from pot",
+                ])),
+            ),
             ("winners", ("SARA CONAR",)),
         ],
     )
@@ -497,7 +500,7 @@ class TestHandWithFlopOnly:
             ("turn", None),
             ("river", None),
             ("total_pot", Decimal(150)),
-            ("show_down", False),
+            ("show_down", None),
             ("winners", ("W2lkm2n",)),
         ],
     )
@@ -619,7 +622,13 @@ class TestAllinPreflopHand:
                 ])),
             ),
             ("total_pot", Decimal(26310)),
-            ("show_down", True),
+            (
+                "show_down", (_Street([
+                    "",
+                    "costamar collected 21570 from side pot",
+                    "costamar collected 4740 from main pot"
+                ])),
+            ),
             ("winners", ("costamar",)),
         ],
     )
@@ -728,7 +737,7 @@ class TestBodyMissingPlayerNoBoard:
                 ])),
             ),
             ("total_pot", Decimal(1900)),
-            ("show_down", False),
+            ("show_down", None),
             ("winners", ("Theralion",)),
         ],
     )
@@ -828,7 +837,7 @@ class TestBodyEveryStreet:
                 ])),
             ),
             ("total_pot", Decimal(1300)),
-            ("show_down", False),
+            ("show_down", None),
             ("winners", ("flettl2",)),
         ],
     )
