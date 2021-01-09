@@ -236,7 +236,7 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         for action in all_actions:
             if action.action in [Action.BET, Action.RAISE, Action.CALL, Action.SB, Action.BB]:
                 earnings -= action.amount
-            elif action.action in [Action.WIN, Action.CASH_OUT]:
+            elif action.action in [Action.WIN, Action.CASH_OUT, Action.RETURN]:
                 earnings += action.amount
         self.earnings = earnings
 
