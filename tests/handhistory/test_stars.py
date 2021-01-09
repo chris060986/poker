@@ -662,10 +662,6 @@ class TestAllinPreflopHand:
     def test_flop(self, hand):
         assert isinstance(hand.flop, _Street)
 
-    @pytest.mark.xfail
-    def test_flop_pot(self, hand):
-        assert hand.flop.pot == Decimal(26310)
-
 
 class TestBodyMissingPlayerNoBoard:
     hand_text = stars_hands.HAND3
@@ -877,10 +873,6 @@ class TestBodyEveryStreet:
 
     def test_flop(self, hand):
         assert isinstance(hand.flop, _Street)
-
-    @pytest.mark.xfail
-    def test_flop_pot(self, hand):
-        assert hand.flop.pot == Decimal(800)
 
 
 class TestClassRepresentation:
