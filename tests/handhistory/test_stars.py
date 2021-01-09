@@ -94,7 +94,7 @@ class TestActionTypes():
             ({"susipoo: doesn't show hand "}, _PlayerAction(name="susipoo", action=Action.MUCK, amount=None)),
             ({"Uncalled bet ($0.15) returned to susipoo"}, _PlayerAction(name="susipoo", action=Action.RETURN, amount=Decimal('0.15'))),
             ({"susipoo collected $0.34 from pot"}, _PlayerAction(name="susipoo", action=Action.WIN, amount=Decimal('0.34'))),
-            ({"Just God Spb: raises $0.10 to $0.15"}, _PlayerAction(name="Just God Spb", action=Action.RAISE, amount=Decimal('0.10'))),
+            ({"Just God Spb: raises $0.10 to $0.15"}, _PlayerAction(name="Just God Spb", action=Action.RAISE, amount=Decimal('0.15'))),
             ({"susipoo: bets $0.25"}, _PlayerAction(name="susipoo", action=Action.BET, amount=Decimal('0.25'))),
             ({"susipoo leaves the table"}, None),
             ({"susipoo cashed out the hand for $1.67 | Cash Out Fee $0.02"}, None),
@@ -895,3 +895,18 @@ class TestPlayerNameWithDot:
         player_names = [p.name for p in hand.players]
         player_index = player_names.index(".prestige.U$")
         assert hand.players[player_index].stack == 3000
+
+
+class TestEarningsReturnedBet:
+    hand_text= stars_hands.HAND15
+
+    def testEarnings(self, hand):
+        assert hand.earnings == Decimal('0.28')
+
+
+# Problem: showdown actions are not parsed
+class TestEarningsWinner:
+    hand_text= stars_hands.HAND16
+
+    def testEarnings(self, hand):
+        assert hand.earnings == Decimal('4.68')

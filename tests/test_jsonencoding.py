@@ -196,8 +196,8 @@ class TestFullPokerstarsHand:
                         "{\"name\": \"3_Socks420\", \"action\": \"FOLD\"}, " \
                         "{\"name\": \"Laandris09\", \"action\": \"FOLD\"}, " \
                         "{\"name\": \"Ammageddon\", \"action\": \"FOLD\"}, " \
-                        "{\"name\": \"BigSiddyB\", \"action\": \"RAISE\", \"amount\": 0.02}, " \
-                        "{\"name\": \"sindyeichelbaum\", \"action\": \"RAISE\", \"amount\": 0.59}, " \
+                        "{\"name\": \"BigSiddyB\", \"action\": \"RAISE\", \"amount\": 0.04}, " \
+                        "{\"name\": \"sindyeichelbaum\", \"action\": \"RAISE\", \"amount\": 0.63}, " \
                         "{\"name\": \"masterhodge\", \"action\": \"FOLD\"}, "\
                         "{\"name\": \"pokerhero\", \"action\": \"FOLD\"}, " \
                         "{\"name\": \"BigSiddyB\", \"action\": \"CALL\", \"amount\": 0.59}]}"
@@ -287,4 +287,4 @@ class TestFullPokerstarsHand:
     def test_cash_out(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand14())
         print(json)
-        assert "\"earnings\": -1.77" in json
+        assert "\"earnings\": -2.34" in json

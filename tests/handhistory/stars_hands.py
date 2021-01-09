@@ -671,3 +671,99 @@ Seat 7: mikemb69 folded before Flop (didn't bet)
 Seat 8: Theo53842 showed [Kc Ks] and lost with a pair of Kings (cashed out).
 Seat 9: TchilePR (button) folded on the Flop
 """
+
+HAND15="""PokerStars Hand #220748418896:  Hold'em No Limit ($0.02/$0.05 USD) - 2020/11/24 13:24:49 ET
+Table 'Tauntonia IV' 9-max Seat #8 is the button
+Seat 2: nanoroma ($10.03 in chips)
+Seat 3: moneymakerxyz ($12.22 in chips)
+Seat 5: pokerhero ($3.71 in chips)
+Seat 6: Extanse ($6.24 in chips)
+Seat 7: mikemb69 ($4.08 in chips)
+Seat 8: A Gaf A ($5 in chips)
+Seat 9: TchilePR ($1.14 in chips)
+TchilePR: posts small blind $0.02
+BigAngryFish: is sitting out
+BigAngryFish leaves the table
+nanoroma: posts big blind $0.05
+xricks: sits out
+*** HOLE CARDS ***
+Dealt to pokerhero [As Kc]
+moneymakerxyz: folds
+pokerhero: raises $0.20 to $0.25
+Extanse: folds
+mikemb69: folds
+A Gaf A: folds
+TchilePR: calls $0.23
+nanoroma: folds
+*** FLOP *** [2h 3s 4c]
+TchilePR: checks
+pokerhero: bets $0.53
+TchilePR: folds
+Uncalled bet ($0.53) returned to pokerhero
+pokerhero collected $0.53 from pot
+pokerhero: doesn't show hand
+*** SUMMARY ***
+Total pot $0.55 | Rake $0.02
+Board [2h 3s 4c]
+Seat 2: nanoroma (big blind) folded before Flop
+Seat 3: moneymakerxyz folded before Flop (didn't bet)
+Seat 5: pokerhero collected ($0.53)
+Seat 6: Extanse folded before Flop (didn't bet)
+Seat 7: mikemb69 folded before Flop (didn't bet)
+Seat 8: A Gaf A (button) folded before Flop (didn't bet)
+Seat 9: TchilePR (small blind) folded on the Flop"""
+
+HAND16="""PokerStars Hand #220749455810:  Hold'em No Limit ($0.02/$0.05 USD) - 2020/11/24 13:52:36 ET
+Table 'Tauntonia IV' 9-max Seat #8 is the button
+Seat 1: Kefer_1985 ($1.95 in chips)
+Seat 2: nanoroma ($10.57 in chips)
+Seat 3: moneymakerxyz ($14.07 in chips)
+Seat 4: GOMA216 ($4.97 in chips)
+Seat 5: pokerhero ($4.79 in chips)
+Seat 6: horov-zenya ($4.98 in chips)
+Seat 7: mikemb69 ($8.38 in chips)
+Seat 8: A Gaf A ($5.10 in chips)
+Seat 9: TchilePR ($6.79 in chips)
+TchilePR: posts small blind $0.02
+Kefer_1985: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to pokerhero [8s 8c]
+nanoroma: raises $0.05 to $0.10
+moneymakerxyz: folds
+GOMA216: calls $0.10
+pokerhero: calls $0.10
+horov-zenya: folds
+mikemb69: folds
+A Gaf A: folds
+TchilePR: calls $0.08
+Kefer_1985: calls $0.05
+*** FLOP *** [5h 8h Js]
+TchilePR: checks
+Kefer_1985: checks
+nanoroma: checks
+GOMA216: bets $0.74
+pokerhero: calls $0.74
+TchilePR: folds
+Kefer_1985: folds
+nanoroma: folds
+*** TURN *** [5h 8h Js] [Kd]
+GOMA216: bets $4.13 and is all-in
+pokerhero: calls $3.95 and is all-in
+Uncalled bet ($0.18) returned to GOMA216
+*** RIVER *** [5h 8h Js Kd] [Ts]
+*** SHOW DOWN ***
+GOMA216: shows [Jc Qc] (a pair of Jacks)
+pokerhero: shows [8s 8c] (three of a kind, Eights)
+pokerhero collected $9.47 from pot
+*** SUMMARY ***
+Total pot $9.88 | Rake $0.41
+Board [5h 8h Js Kd Ts]
+Seat 1: Kefer_1985 (big blind) folded on the Flop
+Seat 2: nanoroma folded on the Flop
+Seat 3: moneymakerxyz folded before Flop (didn't bet)
+Seat 4: GOMA216 showed [Jc Qc] and lost with a pair of Jacks
+Seat 5: pokerhero showed [8s 8c] and won ($9.47) with three of a kind, Eights
+Seat 6: horov-zenya folded before Flop (didn't bet)
+Seat 7: mikemb69 folded before Flop (didn't bet)
+Seat 8: A Gaf A (button) folded before Flop (didn't bet)
+Seat 9: TchilePR (small blind) folded on the Flop"""
