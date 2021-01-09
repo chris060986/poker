@@ -41,8 +41,8 @@ Repo and contact
 
 
 .. |travis| image:: https://travis-ci.org/chris060986/poker.svg?branch=master
-   :target: https://travis-ci.org/pokerregion/poker
+   :target: https://travis-ci.org/chris060986/poker
 
 .. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg
-   :target: https://github.com/pokerregion/poker/blob/master/LICENSE
+   :target: https://github.com/chris060986/poker/blob/master/LICENSE
    :alt: MIT License
