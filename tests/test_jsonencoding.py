@@ -276,7 +276,7 @@ class TestFullPokerstarsHand:
         json = json_encoder.encode(get_parsed_hand())
         winners = re.search("\"winners\": \[(.*)\]", json).group(1)
         assert "BigSiddyB" in winners
-        assert "sindyeichelbaum (button)" in winners
+        assert "sindyeichelbaum" in winners
 
     def test_total_pot(self, json_encoder):
         json = json_encoder.encode(get_parsed_flop_hand13())

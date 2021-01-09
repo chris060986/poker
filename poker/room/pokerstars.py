@@ -369,11 +369,11 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
         for line in self._splitted[start:]:
             if not self.show_down and "collected" in line:
                 match = self._winner_re.match(line)
-                winners.add(match.group(2))
+                winners.add(self._clean_name(match.group(2)))
             elif self.show_down and "won" in line and "showed" in line:
                 match = self._showdown_re.match(line)
                 seat = int(match.group(1))
-                playername = match.group(2)
+                playername = self._clean_name(match.group(2))
                 split = match.group(3).split()
                 playerCombo = Combo.from_cards(Card(split[0]), Card(split[1]))
                 self.players[seat - 1].combo = playerCombo
@@ -381,6 +381,11 @@ class PokerStarsHandHistory(hh._SplittableHandHistoryMixin, hh._BaseHandHistory)
 
         self.winners = tuple(winners)
 
+    def _clean_name(self, name):
+        name = str.replace(name, "(button)", "")
+        name = str.replace(name, "(small blind)", "")
+        name = str.replace(name, "(big blind)", "")
+        return name
 
 @attr.s(slots=True)
 class _Label:
