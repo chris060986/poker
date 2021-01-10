@@ -53,6 +53,8 @@ class _Street(hh._BaseStreet):
                 action = self._parse_blind(line)
             elif "raises" in line:
                 action = self._parse_raise(line)
+            elif "joins" in line:
+                continue
             elif "leaves" in line:
                 continue
             elif "connected" in line: # also includes disconnected
@@ -73,7 +75,9 @@ class _Street(hh._BaseStreet):
             elif ":" in line:
                 action = self._parse_player_action(line)
             else:
-                raise RuntimeError("bad action line: " + line)
+                error_message = RuntimeError("bad action line: " + line)
+                print(error_message)
+                continue
 
             actions.append(hh._PlayerAction(*action))
         self.actions = tuple(actions) if actions else None
